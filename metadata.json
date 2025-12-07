@@ -1,0 +1,5 @@
+{
+  "name": "CSIR NET Physics Mock Prep",
+  "description": "A fully functional Computer Based Test (CBT) simulation for CSIR NET Physical Sciences. Includes section-wise constraints, negative marking logic, a timer, and a question palette.",
+  "requestFramePermissions": []
+}
