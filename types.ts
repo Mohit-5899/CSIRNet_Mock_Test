@@ -46,4 +46,5 @@ export interface MockTest {
   description: string;
   difficulty: 'Easy' | 'Moderate' | 'Hard';
   tags: string[];
+  category: 'Full Length' | 'Topic Wise';
 }

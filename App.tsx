@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getQuestionsForTest, EXAM_CONFIG } from './services/mockData';
+import { getQuestionsForTest, EXAM_CONFIG, ALL_TESTS } from './services/mockData';
 import { QuestionStatus, SectionType, UserState, MockTest, Question } from './types';
 import { ExamHeader } from './components/ExamHeader';
 import { QuestionPalette } from './components/QuestionPalette';
@@ -50,10 +50,10 @@ const App: React.FC = () => {
   // --- Handlers ---
 
   const handleSelectTest = (testId: number) => {
-    // Ideally fetch test details from ID, for now using MOCK_TESTS import or just finding from data
-    // We will just find it from the list in LandingPage (but here we need the list again if we want the object)
-    // For simplicity, we just create a dummy object or fetch questions immediately.
-    // Let's reset state first.
+    // Find test details
+    const testDetails = ALL_TESTS.find(t => t.id === testId) || null;
+    setSelectedTest(testDetails);
+
     const questions = getQuestionsForTest(testId);
     setExamQuestions(questions);
     
@@ -67,10 +67,6 @@ const App: React.FC = () => {
     setTimeLeft(EXAM_CONFIG.totalTimeMinutes * 60);
     setCurrentQuestionId(1);
     
-    // We need the test details for the header/results. 
-    // Since we pass the ID, we can assume we know which one it is or pass the object up.
-    // For this implementation, let's just set a generic name or fetch from mockData if available.
-    // Let's assume we passed the ID and we proceed to instructions.
     setView('instruction');
   };
 
@@ -223,7 +219,9 @@ const App: React.FC = () => {
             </button>
             <div>
               <h1 className="text-2xl font-bold">Exam Instructions</h1>
-              <p className="opacity-90 text-sm">Please read carefully before proceeding</p>
+              <p className="opacity-90 text-sm">
+                {selectedTest ? selectedTest.title : 'CSIR NET Physics'}
+              </p>
             </div>
           </div>
           <div className="p-8">
@@ -316,6 +314,9 @@ const App: React.FC = () => {
           {/* Summary Sidebar */}
           <div className="bg-slate-800 p-8 text-white md:w-1/3 flex flex-col justify-center items-center text-center">
             <h1 className="text-2xl font-bold mb-6">Score Card</h1>
+            <div className="mb-4 text-gray-400 font-medium">
+              {selectedTest ? selectedTest.title : 'Test Result'}
+            </div>
             <div className="w-32 h-32 rounded-full border-4 border-blue-500 flex items-center justify-center mb-4 bg-slate-700">
               <div>
                 <div className="text-3xl font-bold">{totalScore.toFixed(2)}</div>
@@ -397,7 +398,7 @@ const App: React.FC = () => {
     <div className="flex flex-col h-screen">
       <ExamHeader 
         timeLeft={timeLeft} 
-        examName="CSIR NET - Physical Sciences"
+        examName={selectedTest ? selectedTest.title : "CSIR NET Exam"}
         candidateName="Student"
         onSubmit={() => {
           if(window.confirm("Are you sure you want to submit the exam?")) {
